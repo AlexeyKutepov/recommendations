@@ -119,7 +119,7 @@ def top_matches(prefs, person, n=5, similarity=sim_pearson):
     :return: писок наилучших соответствий для человека
     """
 
-    scores=[(similarity(prefs,person,other),other) for other in prefs if other!=person]
+    scores = [(similarity(prefs, person, other), other) for other in prefs if other != person]
 
     # Отсортировать список по убыванию оценок
     scores.sort()
@@ -127,7 +127,43 @@ def top_matches(prefs, person, n=5, similarity=sim_pearson):
     return scores[0:n]
 
 
+def get_recommendations(prefs, person, similarity=sim_pearson):
+    """
+    Получить рекомендации для заданного человека, пользуясь взвешенным средним оценок, данных всеми остальными пользователями
+    :param prefs: набор данных
+    :param person: человек
+    :param similarity: функция для вычисления коэффициента подобия
+    :return: рекомендации
+    """
+    totals = {}
+    sim_sums = {}
+    for other in prefs:
+        # сравнивать человека с самим собой же не нужно
+        if other == person: continue
+        sim = similarity(prefs,person,other)
+        # игнорировать нулевые и отрицательные оценки
+        if sim <= 0: continue
+        for item in prefs[other]:
+            # оценивать только фильмы, которые я еще не смотрел
+            if item not in prefs[person] or prefs[person][item] == 0:
+                # Коэффициент подобия * Оценка
+                totals.setdefault(item,0)
+                totals[item] += prefs[other][item] * sim
+                # Сумма коэффициентов подобия
+                sim_sums.setdefault(item,0)
+                sim_sums[item] += sim
+
+    # Создать нормализованный список
+    rankings = [(total/sim_sums[item], item) for item, total in totals.items()]
+
+    # Вернуть отсортированный список
+    rankings.sort()
+    rankings.reverse()
+    return rankings
+
+
 if __name__ == "__main__":
     print(sim_distance(critics, 'Lisa Rose', 'Toby'))
     print(sim_pearson(critics, 'Lisa Rose', 'Toby'))
-    print(top_matches(critics, 'Lisa Rose', similarity=sim_distance))
+    print(top_matches(critics, 'Lisa Rose'))
+    print(get_recommendations(critics, 'Toby'))
