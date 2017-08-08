@@ -46,10 +46,19 @@ critics={
     }
 }
 
+
 from math import sqrt
 
-# Возвращает оценку подобия person1 и person2 на основе расстояния
+
 def sim_distance(prefs, person1, person2):
+    """
+    Возвращает оценку подобия person1 и person2 на основе расстояния
+    :param prefs: набор данных
+    :param person1: человек 1
+    :param person2: человек 2
+    :return: коэффициент подобия
+    """
+
     # Получить список предметов, оцененных обоими
     si = {}
     for item in prefs[person1]:
@@ -63,8 +72,15 @@ def sim_distance(prefs, person1, person2):
 
     return 1/(1 + sqrt(sum_of_squares))
 
-# Коэффициент кореляции Пирсона
+
 def sim_pearson(prefs, person1, person2):
+    """
+    Коэффициент кореляции Пирсона
+    :param prefs: набор данных
+    :param person1: человек 1
+    :param person2: человек 2
+    :return: коэффициент кореляции Пирсона
+    """
     si = {}
     for item in prefs[person1]:
         if item in prefs[person2]:
@@ -93,6 +109,25 @@ def sim_pearson(prefs, person1, person2):
     return num/den
 
 
+def top_matches(prefs, person, n=5, similarity=sim_pearson):
+    """
+    Возвращает список наилучших соответствий для человека из словаря prefs.
+    :param prefs: набор данных
+    :param person: человек
+    :param n: количество наиболее похожих людей
+    :param similarity: функция для вычисления коэффициента подобия
+    :return: писок наилучших соответствий для человека
+    """
+
+    scores=[(similarity(prefs,person,other),other) for other in prefs if other!=person]
+
+    # Отсортировать список по убыванию оценок
+    scores.sort()
+    scores.reverse()
+    return scores[0:n]
+
+
 if __name__ == "__main__":
-    print(sim_distance(critics, 'Lisa Rose', 'Gene Seymour'))
-    print(sim_pearson(critics, 'Lisa Rose', 'Gene Seymour'))
+    print(sim_distance(critics, 'Lisa Rose', 'Toby'))
+    print(sim_pearson(critics, 'Lisa Rose', 'Toby'))
+    print(top_matches(critics, 'Lisa Rose', similarity=sim_distance))
