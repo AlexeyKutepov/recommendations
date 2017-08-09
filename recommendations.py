@@ -1,39 +1,29 @@
-rus_critics = {
-    '': {
-
-    },
-    '': {
-
-    },
-    '': {
-
-    },
-    '': {
-
-    },
-    '': {
-
-    },
-    '': {
-
-    },
-    '': {
-
-    },
-    '': {
-
-    },
-    '': {
-
-    },
-    '': {
-
-    },
-    '': {
-
-    },
-    '': {
-
+# Мои предпочтения
+me = {
+    'Алексей':{
+        'Ла-Ла Ленд':100,
+        'Зверополис':90,
+        'Легенда №17':70,
+        'Стартрек: Возмездие':90,
+        'Стартрек: Бесконечность':90,
+        'Интерстеллар':100,
+        'Джон Уик 2': 100,
+        'Логан: Росомаха': 40,
+        'Три икса: Мировое господство': 10,
+        'Отряд самоубийц': 65,
+        'Тайная жизнь домашних животных': 80,
+        'Зверопой': 60,
+        'Стражи Галактики. Часть 2': 90,
+        'Человек-паук: Возвращение домой': 80,
+        'Стив Джобс': 10,
+        'Хоббит: Нежданное путешествие': 90,
+        'Сталинград': 40,
+        'Джанго Освобожденный': 100,
+        'Оз: Великий и ужасный': 60,
+        'Крёстный отец': 100,
+        'Игра на понижение': 90,
+        'Лего Фильм: Бэтмен':10,
+        'Форсаж 8':10
     },
 }
 
@@ -202,7 +192,14 @@ def get_recommendations(prefs, person, similarity=sim_pearson):
 
 
 if __name__ == "__main__":
-    print(sim_distance(critics, 'Lisa Rose', 'Toby'))
-    print(sim_pearson(critics, 'Lisa Rose', 'Toby'))
-    print(top_matches(critics, 'Lisa Rose'))
-    print(get_recommendations(critics, 'Toby'))
+    # print(sim_distance(critics, 'Lisa Rose', 'Toby'))
+    # print(sim_pearson(critics, 'Lisa Rose', 'Toby'))
+    # print(top_matches(critics, 'Lisa Rose'))
+    # print(get_recommendations(critics, 'Toby'))
+
+    from rus_critics import rus_critics
+
+    rus_critics.update(me)
+
+    print(top_matches(rus_critics, 'Алексей'))
+    print(get_recommendations(rus_critics, 'Алексей', similarity=sim_pearson))
