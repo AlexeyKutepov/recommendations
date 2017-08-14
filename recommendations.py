@@ -1,41 +1,3 @@
-# Мои предпочтения
-me = {
-    'Алексей':{
-        'Ла-Ла Ленд':100,
-        'Зверополис':90,
-        'Легенда №17':70,
-        'Стартрек: Возмездие':90,
-        'Стартрек: Бесконечность':90,
-        'Интерстеллар':100,
-        'Джон Уик':90,
-        'Джон Уик 2': 90,
-        'Логан: Росомаха': 40,
-        'Три икса: Мировое господство': 10,
-        'Отряд самоубийц': 65,
-        'Тайная жизнь домашних животных': 80,
-        'Зверопой': 60,
-        'Стражи Галактики. Часть 2': 90,
-        'Человек-паук: Возвращение домой': 80,
-        'Стив Джобс': 10,
-        'Хоббит: Нежданное путешествие': 90,
-        'Сталинград': 40,
-        'Джанго Освобожденный': 100,
-        'Оз: Великий и ужасный': 60,
-        'Крёстный отец': 100,
-        'Игра на понижение': 90,
-        'Лего Фильм: Бэтмен':10,
-        'Форсаж 8':10,
-        'Форсаж 7':10,
-        'Хранители снов':30,
-        'Иллюзия обмана': 80,
-        'Иллюзия обмана 2':80,
-        'Его собачье дело':75,
-        'Кредо убийцы':30,
-        'Защитники':10,
-        'Элизиум: Рай не на Земле':70,
-    },
-}
-
 # Словарь кинокритиков и выставленных ими оценок для небольшого набора данных о фильмах
 critics = {
     'Lisa Rose': {
@@ -90,7 +52,7 @@ from math import sqrt
 
 def sim_distance(prefs, person1, person2):
     """
-    Возвращает оценку подобия person1 и person2 на основе расстояния
+    Возвращает оценку подобия person1 и person2 на основе Евклидова расстояния
     :param prefs: набор данных
     :param person1: человек 1
     :param person2: человек 2
@@ -103,11 +65,15 @@ def sim_distance(prefs, person1, person2):
         if item in prefs[person2]:
             si[item] = 1
 
+    # Если нет ни одной общей оценки, то вернуть 0
     if len(si) == 0:
         return 0
 
-    sum_of_squares = sum([pow(prefs[person1][item] - prefs[person2][item], 2) for item in prefs[person1] if item in prefs[person2]])
+    # Сложить квадраты разностей
+    sum_of_squares = sum([pow(prefs[person1][item] - prefs[person2][item], 2)
+                          for item in prefs[person1] if item in prefs[person2]])
 
+    # Расчитать коэффициент
     return 1/(1 + sqrt(sum_of_squares))
 
 
@@ -119,11 +85,14 @@ def sim_pearson(prefs, person1, person2):
     :param person2: человек 2
     :return: коэффициент кореляции Пирсона
     """
+
+    # Получить список предметов, оцененных обоими
     si = {}
     for item in prefs[person1]:
         if item in prefs[person2]:
             si[item] = 1
 
+    # Если нет ни одной общей оценки, то вернуть 0
     if len(si) == 0:
         return 0
 
@@ -157,7 +126,8 @@ def top_matches(prefs, person, n=5, similarity=sim_pearson):
     :return: писок наилучших соответствий для человека
     """
 
-    scores = [(similarity(prefs, person, other), other) for other in prefs if other != person]
+    scores = [(similarity(prefs, person, other), other)
+              for other in prefs if other != person]
 
     # Отсортировать список по убыванию оценок
     scores.sort()
@@ -192,7 +162,8 @@ def get_recommendations(prefs, person, similarity=sim_pearson):
                 sim_sums[item] += sim
 
     # Создать нормализованный список
-    rankings = [(total/sim_sums[item], item) for item, total in totals.items()]
+    rankings = [(total/sim_sums[item], item)
+                for item, total in totals.items()]
 
     # Вернуть отсортированный список
     rankings.sort()
@@ -201,14 +172,15 @@ def get_recommendations(prefs, person, similarity=sim_pearson):
 
 
 if __name__ == "__main__":
-    # print(sim_distance(critics, 'Lisa Rose', 'Toby'))
-    # print(sim_pearson(critics, 'Lisa Rose', 'Toby'))
-    # print(top_matches(critics, 'Lisa Rose'))
-    # print(get_recommendations(critics, 'Toby'))
+    print(sim_distance(critics, 'Toby', 'Lisa Rose'))
+    print(sim_pearson(critics, 'Toby', 'Lisa Rose'))
+    print(top_matches(critics, 'Toby'))
+    print(get_recommendations(critics, 'Toby'))
 
+    from me import me
     from rus_critics import rus_critics
 
     rus_critics.update(me)
 
     print(top_matches(rus_critics, 'Алексей'))
-    print(get_recommendations(rus_critics, 'Алексей', similarity=sim_pearson))
+    print(get_recommendations(rus_critics, 'Алексей'))
