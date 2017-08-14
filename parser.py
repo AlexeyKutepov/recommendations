@@ -1,7 +1,7 @@
-from bs4 import *
-from web_connector import web_connector
-
 import re
+
+from bs4 import BeautifulSoup
+from web_connector import web_connector
 
 
 def parse_critic(web_address):
