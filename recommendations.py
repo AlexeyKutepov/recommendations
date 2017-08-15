@@ -113,6 +113,11 @@ def sim_pearson(prefs, person1, person2):
 
     if den == 0: return 0
 
+    # import numpy
+
+    # print ("numpy", numpy.corrcoef([prefs[person1][item] for item in si], [prefs[person2][item] for item in si])[0, 1])
+    # print ("custom", num/den)
+
     return num/den
 
 
